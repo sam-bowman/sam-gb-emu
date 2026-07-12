@@ -59,7 +59,6 @@ $message = Read-Host "Description"
 
 if ($currentBranch -eq "main") {
 
-```
 $branchName = "$type/$scope-$($message.ToLower() -replace '[^a-z0-9]+','-')"
 
 Write-Host ""
@@ -72,7 +71,6 @@ if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to create branch."
     exit 1
 }
-```
 
 }
 
@@ -87,7 +85,6 @@ $confirm = Read-Host "Continue? (y/n)"
 
 if ($confirm -eq "y") {
 
-```
 git add .
 
 git commit -m $commitMessage
@@ -96,7 +93,6 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host ""
     Write-Host "Committed successfully."
 }
-```
 
 }
 else {
