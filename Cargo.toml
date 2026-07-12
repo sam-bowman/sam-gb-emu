@@ -1,0 +1,10 @@
+[package]
+name = "sam-gb-emu"
+version = "0.1.0"
+edition = "2024"
+authors = ["Sam"]
+
+description = "A Nintendo Game Boy DMG-01 emulator written in Rust."
+license = "MIT"
+
+[dependencies]
