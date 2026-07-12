@@ -11,13 +11,12 @@ Write-Host ""
 $currentBranch = git branch --show-current
 
 if ($currentBranch -eq "main") {
-Write-Host "You are currently on main."
-Write-Host "A new branch will be created."
-Write-Host ""
-}
-else {
-Write-Host "Current branch: $currentBranch"
-Write-Host ""
+    Write-Host "You are currently on main."
+    Write-Host "A new branch will be created."
+    Write-Host ""
+} else {
+    Write-Host "Current branch: $currentBranch"
+    Write-Host ""
 }
 
 Write-Host "Select commit type:"
@@ -34,17 +33,19 @@ Write-Host ""
 $typeChoice = Read-Host "Choice"
 
 switch ($typeChoice) {
-"1" { $type = "feat" }
-"2" { $type = "fix" }
-"3" { $type = "refactor" }
-"4" { $type = "test" }
-"5" { $type = "docs" }
-"6" { $type = "chore" }
-"7" { $type = "perf" }
-default {
-Write-Host "Invalid choice"
-exit 1
-}
+
+    "1" { $type = "feat" }
+    "2" { $type = "fix" }
+    "3" { $type = "refactor" }
+    "4" { $type = "test" }
+    "5" { $type = "docs" }
+    "6" { $type = "chore" }
+    "7" { $type = "perf" }
+
+    default {
+        Write-Host "Invalid choice"
+        exit 1
+    }
 }
 
 Write-Host ""
@@ -59,18 +60,18 @@ $message = Read-Host "Description"
 
 if ($currentBranch -eq "main") {
 
-$branchName = "$type/$scope-$($message.ToLower() -replace '[^a-z0-9]+','-')"
+    $branchName = "$type/$scope-$($message.ToLower() -replace '[^a-z0-9]+','-')"
 
-Write-Host ""
-Write-Host "Creating branch:"
-Write-Host $branchName
+    Write-Host ""
+    Write-Host "Creating branch:"
+    Write-Host $branchName
 
-git checkout -b $branchName
+    git checkout -b $branchName
 
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Failed to create branch."
-    exit 1
-}
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Failed to create branch."
+        exit 1
+    }
 
 }
 
@@ -85,16 +86,23 @@ $confirm = Read-Host "Continue? (y/n)"
 
 if ($confirm -eq "y") {
 
-git add .
+    git add .
 
-git commit -m $commitMessage
+    git commit -m $commitMessage
 
-if ($LASTEXITCODE -eq 0) {
-    Write-Host ""
-    Write-Host "Committed successfully."
-}
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host ""
+        Write-Host "Committed successfully."
+    } else {
+    Write-Host "Cancelled."
+    }
 
-}
-else {
-Write-Host "Cancelled."
+    git push
+
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host ""
+        Write-Host "Pushed successfully."
+    } else {
+        Write-Host "Cancelled."
+    }
 }
