@@ -23,7 +23,7 @@ jobs:
             binary: sam-gb-emu
 
           - name: linux-arm64
-            os: ubuntu-latest
+            os: [self-hosted, linux, ARM64]
             target: aarch64-unknown-linux-gnu
             binary: sam-gb-emu
 
