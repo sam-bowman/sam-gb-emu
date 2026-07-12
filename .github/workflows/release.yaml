@@ -78,7 +78,9 @@ jobs:
         shell: bash
         run: |
           mkdir package
-          cp target/${{ matrix.target }}/release/${{ matrix.binary }} package/
+
+          cp target/${{ matrix.target }}/release/${{ matrix.binary }} \
+            package/sam-gb-emu-${{ matrix.name }}${{ matrix.binary == 'sam-gb-emu.exe' && '.exe' || '' }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -115,4 +117,4 @@ jobs:
           tag_name: ${{ steps.tag.outputs.tag }}
           generate_release_notes: true
           files: |
-            release/**/*
+            release/*/*
