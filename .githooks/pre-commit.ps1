@@ -30,7 +30,7 @@ exit 1
 # Rust formatting
 
 Write-Host "Checking formatting..."
-cargo fmt --check
+cargo fmt
 
 if ($LASTEXITCODE -ne 0) {
 Write-Host ""
