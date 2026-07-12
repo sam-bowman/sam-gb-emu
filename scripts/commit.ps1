@@ -86,6 +86,21 @@ $confirm = Read-Host "Continue? (y/n)"
 
 if ($confirm -eq "y") {
 
+
+    Write-Host ""
+    Write-Host "Running cargo fmt..."
+
+    cargo fmt
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host ""
+        Write-Host "Formatting failed. Commit cancelled."
+        exit 1
+    }
+
+    Write-Host ""
+    Write-Host "Formatting complete."
+
     git add .
 
     git commit -m $commitMessage
