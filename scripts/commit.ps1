@@ -93,16 +93,18 @@ if ($confirm -eq "y") {
     if ($LASTEXITCODE -eq 0) {
         Write-Host ""
         Write-Host "Committed successfully."
+        
+        git push
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host ""
+            Write-Host "Pushed successfully."
+        } else {
+            Write-Host "Cancelled Push."
+        }
     } else {
-    Write-Host "Cancelled."
+        Write-Host "Cancelled Commit."
     }
 
-    git push
-
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host ""
-        Write-Host "Pushed successfully."
-    } else {
-        Write-Host "Cancelled."
-    }
+    
 }

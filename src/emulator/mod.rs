@@ -6,9 +6,7 @@ pub struct Emulator {
 
 impl Emulator {
     pub fn new() -> Self {
-        Self {
-            running: false,
-        }
+        Self { running: false }
     }
 
     pub fn run(&mut self) {
@@ -17,5 +15,11 @@ impl Emulator {
 
     pub fn is_running(&self) -> bool {
         self.running
+    }
+}
+
+impl Default for Emulator {
+    fn default() -> Self {
+        Self::new()
     }
 }
