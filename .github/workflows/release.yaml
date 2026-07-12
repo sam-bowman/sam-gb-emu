@@ -4,34 +4,102 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  release:
-    name: Build and Release
-    runs-on: [self-hosted, linux, ARM64]
+  build:
+    name: Build ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux
+          - name: linux-x86_64
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            binary: sam-gb-emu
+
+          - name: linux-arm64
+            os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            binary: sam-gb-emu
+
+          - name: linux-x86
+            os: ubuntu-latest
+            target: i686-unknown-linux-gnu
+            binary: sam-gb-emu
+
+          # Windows
+          - name: windows-x86_64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+            binary: sam-gb-emu.exe
+
+          - name: windows-x86
+            os: windows-latest
+            target: i686-pc-windows-msvc
+            binary: sam-gb-emu.exe
+
+          # macOS
+          - name: macos-x86_64
+            os: macos-latest
+            target: x86_64-apple-darwin
+            binary: sam-gb-emu
+
+          - name: macos-arm64
+            os: macos-latest
+            target: aarch64-apple-darwin
+            binary: sam-gb-emu
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Install build dependencies
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential
+          sudo apt-get install -y build-essential gcc-multilib
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache Cargo dependencies
-        uses: Swatinem/rust-cache@v2
+        with:
+          targets: ${{ matrix.target }}
 
       - name: Build release binary
-        run: cargo build --release
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Package binary
+        shell: bash
+        run: |
+          mkdir package
+          cp target/${{ matrix.target }}/release/${{ matrix.binary }} package/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: package/
+
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release
 
       - name: Create release tag
         id: tag
@@ -47,4 +115,4 @@ jobs:
           tag_name: ${{ steps.tag.outputs.tag }}
           generate_release_notes: true
           files: |
-            target/release/sam-gb-emu
+            release/**/*
